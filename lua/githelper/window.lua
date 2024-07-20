@@ -6,7 +6,6 @@ local windowHelper = require("githelper.windowHelper")
 local gitUtils = require("githelper.gitUtils")
 local currentBorder = border.doubleBorder
 
-
 local function open_window()
   buf = api.nvim_create_buf(false, true)
   local border_buf = api.nvim_create_buf(false, true)
@@ -85,7 +84,7 @@ local function update_view()
   table.insert(result, border.fn.bottomBorder(currentBorder, win_width))
 
   -- Tips
-  api.nvim_buf_set_lines(buf, 1, 2, false, {"s = Stage file, u = unstage file, d = Discrard file, c = Commit, p = push"})
+  api.nvim_buf_set_lines(buf, 1, 2, false, {"s = Stage file, u = unstage file, d = Discrard file, c = Commit, p = push, <cr> = edit file"})
 
   -- Tables of content
   api.nvim_buf_set_lines(buf, 2, -1, false, result)
@@ -107,8 +106,9 @@ local function getFilePathFromGitstatus()
 end
 
 local function open_file()
+  local currentFile = getFilePathFromGitstatus()
   close_window()
-  api.nvim_command('edit '..getFilePathFromGitstatus(api.nvim_get_current_line()))
+  api.nvim_command('edit '.. currentFile)
 end
 
 local function stage_file()
@@ -137,7 +137,7 @@ end
 
 local function set_mappings()
   local mappings = {
-    --['<cr>'] = 'open_file()',
+    ['<cr>'] = 'open_file()',
     q = 'close_window()',
     s = 'stage_file()',
     u = 'unstage_file()',
@@ -175,7 +175,7 @@ end
 return {
   window = window,
   update_view = update_view,
-  -- open_file = open_file,
+  open_file = open_file,
   stage_file = stage_file,
   unstage_file = unstage_file,
   discard_file = discard_file,

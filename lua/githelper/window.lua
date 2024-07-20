@@ -127,7 +127,7 @@ local function discard_file()
 end
 
 local function git_push()
-  gitutils.actions.push()
+  gitUtils.actions.push()
   update_view()
 end
 

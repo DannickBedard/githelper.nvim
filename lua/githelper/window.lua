@@ -1,6 +1,5 @@
 local api = vim.api
 local buf, win
-local position = 0
 
 local border = require("githelper.border")
 local windowHelper = require("githelper.windowHelper")
@@ -23,10 +22,7 @@ local function open_window()
   local row = math.ceil((height - win_height) / 2 - 1)
   local col = math.ceil((width - win_width) / 2)
 
-
-
   local opts = {
-    -- style = "minimal",
     relative = "editor",
     width = win_width ,
     height = math.ceil(win_height),
@@ -34,32 +30,6 @@ local function open_window()
     col = col,
     border = 'single'
   }
-
-  local border_opts = {
-    style = "minimal",
-    relative = "editor",
-    width = win_width + 2,
-    height = win_height + 2,
-    col = (vim.o.columns - width) / 2,
-  }
-
-
-  -- local currentBorder = border.simpleBorder
-  -- local border_lines = {}
-  -- local top_border =  currentBorder[border.CORNER_LEFT_TOP] .. string.rep(currentBorder[border.SIDE_BOTTOM], win_width) .. currentBorder[border.CORNER_RIGHT_TOP] 
-  -- local bottom_border =  currentBorder[border.CORNER_LEFT_BOTTOM] .. string.rep(currentBorder[border.SIDE_BOTTOM], win_width) .. currentBorder[border.CORNER_RIGHT_BOTTOM] 
-  -- local middle_line =  currentBorder[border.SIDE] .. string.rep(' ', win_width) .. currentBorder[border.SIDE] 
-
-  -- table.insert(border_lines, top_border)
-
-  -- for i=1, win_height do
-  --   table.insert(border_lines, middle_line)
-  -- end
-
-  -- table.insert(border_lines, bottom_border)
-  -- api.nvim_buf_set_lines(border_buf, 0, -1, false, border_lines)
-
-  -- local border_win = api.nvim_open_win(border_buf, true, border_opts)
 
   win = api.nvim_open_win(buf, true, opts)
   api.nvim_command('au BufWipeout <buffer> exe "silent bwipeout! "'..border_buf)
@@ -70,7 +40,7 @@ local function open_window()
   api.nvim_buf_add_highlight(buf, -1, 'WhidHeader', 0, 0, -1)
 end
 
-local function update_view(direction)
+local function update_view()
   local width = api.nvim_win_get_width(0)
 
   local height = api.nvim_win_get_height(0)
@@ -82,6 +52,7 @@ local function update_view(direction)
 
   local result = {}
 
+  -- Unstaged File
   local unstagedFile = gitUtils.getUnstagedFile()
   table.insert(result, border.fn.topBorderText("Unstaged", currentBorder, win_width))
   for k,v in pairs(unstagedFile) do
@@ -95,6 +66,7 @@ local function update_view(direction)
 
   table.insert(result, border.fn.bottomBorder(currentBorder, win_width))
 
+  -- Stage file
   local stagedFile = gitUtils.getStagedFile()
   table.insert(result, border.fn.topBorderText("Staged", currentBorder, win_width))
   for k,v in pairs(stagedFile) do
@@ -103,17 +75,19 @@ local function update_view(direction)
 
   table.insert(result, border.fn.bottomBorder(currentBorder, win_width))
 
+  -- Status
   local completStatus = gitUtils.getStatus()
   table.insert(result, border.fn.topBorderText("Complet status", currentBorder, win_width))
   for k,v in pairs(completStatus) do
     table.insert(result, border.fn.middleBorderText(completStatus[k], currentBorder, win_width))
   end
+
   table.insert(result, border.fn.bottomBorder(currentBorder, win_width))
 
   -- Tips
-  api.nvim_buf_set_lines(buf, 1, 2, false, {"s = Stage file, u = unstage file, d = Discrard file, c = Commit, p = push, t = test"})
+  api.nvim_buf_set_lines(buf, 1, 2, false, {"s = Stage file, u = unstage file, d = Discrard file, c = Commit, p = push"})
 
-  -- Tables
+  -- Tables of content
   api.nvim_buf_set_lines(buf, 2, -1, false, result)
 
   api.nvim_buf_add_highlight(buf, -1, 'whidSubHeader', 1, 0, -1)
@@ -124,19 +98,8 @@ local function close_window()
   api.nvim_win_close(win, true)
 end
 
-local function test()
-  local stringTest = "| m lua/test/border.lua         |"
-  stringTest = stringTest:gsub(currentBorder[border.SIDE], "")
-  print("stringTest1 : ")
-  print(stringTest)
-  stringTest = stringTest:match("^%s*(.-)%s*$")
-  print("stringTest2 : ")
-  print(stringTest)
-   local path = stringTest:match("%s*%a+%s+(.+)")
-  print('Test2 : ' .. path)
-end
-
-local function getFilePathFromGitstatus(gitStatus)
+local function getFilePathFromGitstatus()
+  local gitStatus = api.nvim_get_current_line()
   gitStatus = gitStatus:gsub(currentBorder[border.SIDE], "")
   gitStatus = gitStatus:match("^%s*(.-)%s*$")
   local path = gitStatus:match("%s*%a+%s+(.+)")
@@ -149,76 +112,38 @@ local function open_file()
 end
 
 local function stage_file()
-  local path = getFilePathFromGitstatus(api.nvim_get_current_line())
-  local command = "git add " .. path
-  vim.fn.system(command)
-  update_view(0)
+  gitUtils.actions.stageFile(getFilePathFromGitstatus())
+  update_view()
 end
 
 local function unstage_file()
-  local path = getFilePathFromGitstatus(api.nvim_get_current_line())
-  local command = "git restore --staged " .. path
-  vim.fn.system(command)
-  update_view(0)
+  gitUtils.actions.unstageFile(getFilePathFromGitstatus())
+  update_view()
 end
 
 local function discard_file()
-  local path = getFilePathFromGitstatus(api.nvim_get_current_line())
-  local command = "git restore " .. path
-  vim.fn.system(command)
-  update_view(0)
+  gitUtils.actions.discardFile(getFilePathFromGitstatus())
+  update_view()
 end
 
 local function git_push()
-  local command = "git push"
-  vim.fn.system(command)
-  update_view(0)
+  gitutils.actions.push()
+  update_view()
 end
 
 local function commit()
-  local commitBuf = api.nvim_create_buf(false, true)
-  
-  -- Set the buffer to unmodified to avoid the E5108 error
-  api.nvim_buf_set_option(commitBuf, 'modifiable', false)
-
-  -- Open a new window for the terminal buffer
-  local opts = {
-    style = "minimal",
-    relative = "editor",
-    width = 80,
-    height = 20,
-    row = 10,
-    col = 10,
-    border = "rounded"
-  }
-  local terminaWin = api.nvim_open_win(commitBuf, true, opts)
-
-  -- Run the git commit command in the terminal buffer
-  vim.fn.termopen("git commit", {
-    on_exit = function(_, exit_code, _)
-      if exit_code == 0 then
-        print("Commit successful")
-      else
-        print("Commit failed")
-      end
-      -- Close the window and buffer
-      api.nvim_win_close(terminaWin, true)
-      api.nvim_buf_delete(commitBuf, { force = true })
-      update_view(0)
-    end
-  })
+  gitUtils.actions.commit(update_view)
 end
 
 local function set_mappings()
   local mappings = {
-    ['<cr>'] = 'open_file()',
+    --['<cr>'] = 'open_file()',
     q = 'close_window()',
     s = 'stage_file()',
     u = 'unstage_file()',
     d = 'discard_file()',
     c = 'commit()',
     p = 'git_push()',
-    t = 'test()',
   }
 
   for k,v in pairs(mappings) do
@@ -229,7 +154,7 @@ local function set_mappings()
 
   -- Disable key while using the plugin
   local other_chars = {
-    'a', 'b', 'e', 'f', 'g', 'i', 'n', 'o', 'r', 'v', 'w', 'x', 'y', 'z'
+    't','a', 'b', 'e', 'f', 'g', 'i', 'n', 'o', 'r', 'v', 'w', 'x', 'y', 'z'
   }
 
   for k,v in ipairs(other_chars) do
@@ -243,19 +168,18 @@ end
 local function window(content, opts)
   open_window()
   set_mappings()
-  update_view(0)
+  update_view()
   api.nvim_win_set_cursor(win, {4, 0})
 end
 
 return {
   window = window,
   update_view = update_view,
-  open_file = open_file,
+  -- open_file = open_file,
   stage_file = stage_file,
   unstage_file = unstage_file,
   discard_file = discard_file,
   commit = commit,
   git_push = git_push,
-  test = test,
   close_window = close_window
 }

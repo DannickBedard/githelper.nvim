@@ -17,7 +17,7 @@ function M.setup(opts)
 
     if opts.name then
       print("hello, " .. opts.name)
-    else 
+    else
       print ("hello with no name")
     end
 

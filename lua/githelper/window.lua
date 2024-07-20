@@ -1,14 +1,10 @@
--- TODOS :windowwindow
--- - [ ] Make logique to navigate between sections
--- ...
-
 local api = vim.api
 local buf, win
-local resumerBuffer, resumerWin
 local position = 0
 
 local border = require("githelper.border")
 local windowHelper = require("githelper.windowHelper")
+local gitUtils = require("githelper.gitUtils")
 local currentBorder = border.doubleBorder
 
 
@@ -86,28 +82,20 @@ local function update_view(direction)
 
   local result = {}
 
-  local unstagedFile = api.nvim_call_function('systemlist', {
-      'git diff --name-status'
-    })
+  local unstagedFile = gitUtils.getUnstagedFile()
   table.insert(result, border.fn.topBorderText("Unstaged", currentBorder, win_width))
   for k,v in pairs(unstagedFile) do
     table.insert(result, border.fn.middleBorderText(unstagedFile[k], currentBorder, win_width))
   end
 
-  local untrakedFile = api.nvim_call_function('systemlist', {
-      'git ls-files --others'
-  })
-
+  local untrakedFile = gitUtils.getUntrakedFile()
   for k,v in pairs(untrakedFile) do
     table.insert(result, border.fn.middleBorderText("A    ".. untrakedFile[k], currentBorder, win_width))
   end
 
   table.insert(result, border.fn.bottomBorder(currentBorder, win_width))
 
-  local stagedFile = api.nvim_call_function('systemlist', {
-      'git diff --name-status --cached'
-    })
-
+  local stagedFile = gitUtils.getStagedFile()
   table.insert(result, border.fn.topBorderText("Staged", currentBorder, win_width))
   for k,v in pairs(stagedFile) do
     table.insert(result, border.fn.middleBorderText(stagedFile[k], currentBorder, win_width))
@@ -115,17 +103,17 @@ local function update_view(direction)
 
   table.insert(result, border.fn.bottomBorder(currentBorder, win_width))
 
-  local completStatus = api.nvim_call_function('systemlist', {
-      'git status'
-    })
+  local completStatus = gitUtils.getStatus()
   table.insert(result, border.fn.topBorderText("Complet status", currentBorder, win_width))
   for k,v in pairs(completStatus) do
     table.insert(result, border.fn.middleBorderText(completStatus[k], currentBorder, win_width))
   end
   table.insert(result, border.fn.bottomBorder(currentBorder, win_width))
 
+  -- Tips
   api.nvim_buf_set_lines(buf, 1, 2, false, {"s = Stage file, u = unstage file, d = Discrard file, c = Commit, p = push, t = test"})
 
+  -- Tables
   api.nvim_buf_set_lines(buf, 2, -1, false, result)
 
   api.nvim_buf_add_highlight(buf, -1, 'whidSubHeader', 1, 0, -1)
@@ -163,7 +151,6 @@ end
 local function stage_file()
   local path = getFilePathFromGitstatus(api.nvim_get_current_line())
   local command = "git add " .. path
-  print('test'..command.. "test")
   vim.fn.system(command)
   update_view(0)
 end
@@ -204,7 +191,7 @@ local function commit()
     col = 10,
     border = "rounded"
   }
-  local win = api.nvim_open_win(commitBuf, true, opts)
+  local terminaWin = api.nvim_open_win(commitBuf, true, opts)
 
   -- Run the git commit command in the terminal buffer
   vim.fn.termopen("git commit", {
@@ -215,7 +202,7 @@ local function commit()
         print("Commit failed")
       end
       -- Close the window and buffer
-      api.nvim_win_close(win, true)
+      api.nvim_win_close(terminaWin, true)
       api.nvim_buf_delete(commitBuf, { force = true })
       update_view(0)
     end
@@ -253,32 +240,11 @@ local function set_mappings()
 
 end
 
-local function contentOption(opts, key)
-  if opts[key] and opts[key] == true then
-    api.nvim_buf_set_option(buf, key, false)
-  end
-end
-
-local function generateContent(content, opts)
--- content is array
-  api.nvim_buf_set_lines(buf, 1, 2, false, {windowHelper.center('HEAD~'..position)})
-  api.nvim_buf_set_lines(buf, 2, 3, false, {"testing"})
-
-  api.nvim_buf_set_lines(buf, 4, -1, false, result)
-
-  api.nvim_buf_add_highlight(buf, -1, 'whidSubHeader', 1, 0, -1)
-  contentOption(opts, "modifiable")
-
-end
-
-
 local function window(content, opts)
-  position = 0
   open_window()
   set_mappings()
   update_view(0)
   api.nvim_win_set_cursor(win, {4, 0})
-  -- generateContent(content, opts)
 end
 
 return {

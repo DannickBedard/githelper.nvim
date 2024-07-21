@@ -1,12 +1,14 @@
 local M = {}
 
-
 function M.setup(opts)
-
   opts = opts or {}
 
-  vim.keymap.set("n", "<leader>t", function()
+  local keymap = opts.keymap
+  if not keymap then
+    keymap = "<leader>t"
+  end
 
+  vim.keymap.set("n", keymap, function()
     local windowManager = require("githelper.window")
     windowManager.window()
 
@@ -14,13 +16,6 @@ function M.setup(opts)
       vim.api.nvim_err_writeln("Example.nvim requires at least nvim-0.7.0.")
       return;
     end
-
-    if opts.name then
-      print("hello, " .. opts.name)
-    else
-      print ("hello with no name")
-    end
-
   end
   )
 end

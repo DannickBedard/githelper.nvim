@@ -48,7 +48,6 @@ local function update_view()
   local win_width = math.ceil(width * 0.8)
   api.nvim_buf_set_option(buf, 'modifiable', true)
 
-
   local result = {}
 
   -- Unstaged File
@@ -84,7 +83,7 @@ local function update_view()
   table.insert(result, border.fn.bottomBorder(currentBorder, win_width))
 
   -- Tips
-  api.nvim_buf_set_lines(buf, 1, 2, false, {"s = Stage file, u = unstage file, d = Discrard file, c = Commit, p = push, <cr> = edit file"})
+  api.nvim_buf_set_lines(buf, 1, 2, false, {"s = Stage file, u = unstage file, d = Discrard file, c = Commit, p = push, pl = pull, <cr> = edit file"})
 
   -- Tables of content
   api.nvim_buf_set_lines(buf, 2, -1, false, result)
@@ -122,12 +121,19 @@ local function unstage_file()
 end
 
 local function discard_file()
-  gitUtils.actions.discardFile(getFilePathFromGitstatus())
+  local filePath = getFilePathFromGitstatus()
+  gitUtils.actions.discardFile(filePath)
+  gitUtils.actions.discardUntrakedFile(filePath)
   update_view()
 end
 
 local function git_push()
   gitUtils.actions.push()
+  update_view()
+end
+
+local function git_pull()
+  gitUtils.actions.pull()
   update_view()
 end
 
@@ -144,6 +150,7 @@ local function set_mappings()
     d = 'discard_file()',
     c = 'commit()',
     p = 'git_push()',
+    pl = 'git_pull()',
   }
 
   for k,v in pairs(mappings) do
@@ -181,5 +188,6 @@ return {
   discard_file = discard_file,
   commit = commit,
   git_push = git_push,
+  git_pull = git_pull,
   close_window = close_window
 }

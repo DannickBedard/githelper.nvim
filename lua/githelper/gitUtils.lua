@@ -43,8 +43,18 @@ local discardFile = function (path)
   vim.fn.system(command)
 end
 
+local discardUntrakedFile = function (path)
+  local discard_untraked_file = "git clean -f " .. path
+  vim.fn.system(discard_untraked_file)
+end
+
 local push = function()
   local command = "git push"
+  vim.fn.system(command)
+end
+
+local pull = function()
+  local command = "git pull"
   vim.fn.system(command)
 end
 
@@ -93,7 +103,9 @@ return {
     stageFile = stageFile,
     unstageFile = unstageFile,
     discardFile = discardFile,
+    discardUntrakedFile = discardUntrakedFile,
     push = push,
+    pull = pull,
     commit = commit,
   }
 }

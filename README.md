@@ -7,7 +7,6 @@ Small plugin to help stagins file, unstage, discard, commit and push with git.
 Commit : 
 <img width="1200" alt="commit" src="https://github.com/user-attachments/assets/fb52fd5e-7a2d-4271-8641-521f2b875874">
 
-
 ## Setup
 
 ```lua
@@ -21,6 +20,16 @@ Commit :
 }
 ```
 
+## Keymaps
+
+s => stage file
+u => unstage file
+d => discard file
+c => commit
+p => push
+pl => pull
+<cr> => edit file
+
 # TODOS : 
 
 - [ ] Enhance the setup
@@ -28,5 +37,5 @@ Commit :
 - [ ] Make documentation
     - [x] image to show feature
     - [ ] Giph to show feature
-    - [ ] Doc setup & installation
+    - [x] Doc setup & installation
 

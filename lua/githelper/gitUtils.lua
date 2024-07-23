@@ -61,8 +61,12 @@ end
 local commit = function(onCloseAction)
 
   local commitBuf = api.nvim_create_buf(false, true)
-  
+
+  -- delete file in ".git/COMMIT_EDITMSG"
+  vim.fn.system("rm .git/COMMIT_EDITMSG")
+  --
   -- Set the buffer to unmodified to avoid the E5108 error
+
   api.nvim_buf_set_option(commitBuf, 'modifiable', false)
 
   -- Open a new window for the terminal buffer

@@ -40,6 +40,7 @@ end
 return {
   doubleBorder = require("githelper.borders.double"),
   simpleBorder = require("githelper.borders.simple"),
+  simpleRoundedBorder = require("githelper.borders.simpleRounded"),
   simpleThickBorder = require("githelper.borders.thick"),
   CORNER_LEFT_TOP = constant.CORNER_LEFT_TOP ,
   CORNER_RIGHT_TOP = constant.CORNER_RIGHT_TOP ,

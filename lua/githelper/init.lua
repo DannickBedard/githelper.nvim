@@ -5,15 +5,8 @@ local border = require("githelper.border")
 function M.setup(opts)
   opts = opts or {}
 
-  local keymap = opts.keymap
-  local currentBorder = opts.border
-  if not keymap then
-    keymap = "<leader>t"
-  end
-
-  if not currentBorder then
-    currentBorder = border.simpleBorder
-  end
+  local keymap = opts.keymap or "<leader>t"
+  local currentBorder = opts.border or border.simpleBorder
 
   vim.keymap.set("n", keymap, function()
     local Window = require("githelper.windowClass")

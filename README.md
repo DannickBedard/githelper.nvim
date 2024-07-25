@@ -16,7 +16,7 @@ Commit :
         local border = require("githelper.border")
         require("githelper").setup({
             keymap = "<leader>t",
-            border = border.simpleBorder -- doubleBorder, simpleBorder, simpleThickBorder
+            border = border.simpleBorder -- doubleBorder, simpleBorder, simpleRoundedBorder, simpleThickBorder
         })
     end
 }
@@ -44,5 +44,5 @@ pl => pull
     - [x] Doc setup & installation
 
 - [ ] Border
-    - [ ] Make rouded corder available
+    - [x] Make rouded corder available
 

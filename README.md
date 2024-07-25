@@ -13,8 +13,10 @@ Commit :
 {
     "DannickBedard/githelper.nvim",
     config = function ()
+        local border = require("githelper.border")
         require("githelper").setup({
             keymap = "<leader>t",
+            border = border.simpleBorder -- doubleBorder, simpleBorder, simpleThickBorder
         })
     end
 }
@@ -34,8 +36,13 @@ pl => pull
 
 - [ ] Enhance the setup
     - [x] Make the keybinding in the setup.
+    - [x] Make the window into a class. So i can be more customisable
+    - [ ] Make git keymap customisable
 - [ ] Make documentation
     - [x] image to show feature
     - [ ] Giph to show feature
     - [x] Doc setup & installation
+
+- [ ] Border
+    - [ ] Make rouded corder available
 

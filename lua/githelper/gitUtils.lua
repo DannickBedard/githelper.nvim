@@ -58,7 +58,7 @@ local pull = function()
   vim.fn.system(command)
 end
 
-local commit = function(onCloseAction)
+local commit = function(window)
 
   local commitBuf = api.nvim_create_buf(false, true)
 
@@ -92,7 +92,7 @@ local commit = function(onCloseAction)
       -- Close the window and buffer
       api.nvim_win_close(terminaWin, true)
       api.nvim_buf_delete(commitBuf, { force = true })
-      onCloseAction()
+      window:update_view()
     end
   })
 end

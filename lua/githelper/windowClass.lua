@@ -158,6 +158,12 @@ local function git_pull()
   Window:update_view()
 end
 
+local function git_diff()
+  local filePath = getFilePathFromGitstatus()
+  gitUtils.actions.diff(Window, filePath)
+end
+
+
 local function commit()
   gitUtils.actions.commit(Window)
 end
@@ -172,6 +178,7 @@ function Window:set_mappings()
     commit = "c",
     push = "p",
     pull = "pl",
+    diff = "gd",
   }
 
   local mappings = {
@@ -197,7 +204,11 @@ function Window:set_mappings()
       git_push()
     end,
     [self.gitKeymap.pull or defaultGitKeymap.pull] = function ()
+      print("pulling")
       git_pull()
+    end,
+    [self.gitKeymap.diff or defaultGitKeymap.diff] = function ()
+      git_diff()
     end
   }
 
@@ -212,7 +223,7 @@ function Window:set_mappings()
 
   -- Disable key while using the plugin
   local other_chars = {
-    't','a', 'b', 'e', 'f', 'g', 'i', 'n', 'o', 'r', 'v', 'w', 'x', 'y', 'z'
+    't','a', 'b', 'e', 'f', 'i', 'n', 'o', 'r', 'v', 'w', 'x', 'y', 'z'
   }
 
   for k,v in ipairs(other_chars) do

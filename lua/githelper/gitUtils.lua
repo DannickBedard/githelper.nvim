@@ -58,6 +58,42 @@ local pull = function()
   vim.fn.system(command)
 end
 
+local diff = function(window, path)
+
+  local commitBuf = api.nvim_create_buf(false, true)
+
+  -- Set the buffer to unmodified to avoid the E5108 error
+  api.nvim_buf_set_option(commitBuf, 'modifiable', false)
+
+  -- Open a new window for the terminal buffer
+  local opts = {
+    style = "minimal",
+    relative = "editor",
+    width = 80,
+    height = 20,
+    row = 10,
+    col = 10,
+    border = "rounded"
+  }
+  local terminaWin = api.nvim_open_win(commitBuf, true, opts)
+
+  -- Run the git commit command in the terminal buffer
+  vim.fn.termopen("git diff " .. path, {
+    on_exit = function(_, exit_code, _)
+      if exit_code == 0 then
+        print("Commit successful")
+      else
+        print("Commit failed")
+      end
+      -- Close the window and buffer
+      api.nvim_win_close(terminaWin, true)
+      api.nvim_buf_delete(commitBuf, { force = true })
+      window:update_view()
+    end
+  })
+end
+
+
 local commit = function(window)
 
   local commitBuf = api.nvim_create_buf(false, true)
@@ -110,6 +146,7 @@ return {
     discardUntrakedFile = discardUntrakedFile,
     push = push,
     pull = pull,
+    diff = diff,
     commit = commit,
   }
 }

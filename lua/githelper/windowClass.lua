@@ -4,16 +4,17 @@ local buf, win
 local border = require("githelper.border")
 
 -- Meta class
-Window = { currentBorder = border.simpleBorder }
+Window = { currentBorder = border.simpleBorder, gitKeymap}
 
 local windowHelper = require("githelper.windowHelper")
 local gitUtils = require("githelper.gitUtils")
 
-function Window:new(currentBorder)
+function Window:new(currentBorder, gitKeymap)
   local o = {}
   setmetatable(o, self)
   self.__index = self
   self.currentBorder = currentBorder or border.simpleBorder
+  self.gitKeymap = gitKeymap or {}
   return o
 end
 
@@ -162,29 +163,40 @@ local function commit()
 end
 
 function Window:set_mappings()
+  local defaultGitKeymap = {
+    quit = "q",
+    edit = "<cr>",
+    stage = "s",
+    unstage = "u",
+    discard = "d",
+    commit = "c",
+    push = "p",
+    pull = "pl",
+  }
+
   local mappings = {
-    ['<cr>'] = function ()
+    [self.gitKeymap.edit or defaultGitKeymap.edit] = function ()
      open_file()
     end,
-    q = function ()
+    [self.gitKeymap.quit or defaultGitKeymap.quit] = function ()
       Window:close_window()
     end ,
-    s = function ()
+    [self.gitKeymap.stage or defaultGitKeymap.stage] = function ()
       stage_file()
     end,
-    u = function ()
+    [self.gitKeymap.unstage or defaultGitKeymap.unstage] = function ()
       unstage_file()
     end,
-    d = function ()
+    [self.gitKeymap.discard or defaultGitKeymap.discard] = function ()
       discard_file()
     end,
-    c = function ()
+    [self.gitKeymap.commit or defaultGitKeymap.commit] = function ()
       commit()
     end,
-    p = function ()
+    [self.gitKeymap.push or defaultGitKeymap.push] = function ()
       git_push()
     end,
-    pl = function ()
+    [self.gitKeymap.pull or defaultGitKeymap.pull] = function ()
       git_pull()
     end
   }

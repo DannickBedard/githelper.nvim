@@ -14,15 +14,25 @@ Commit :
     "DannickBedard/githelper.nvim",
     config = function ()
         local border = require("githelper.border")
+        local gitKeymap = 
         require("githelper").setup({
-            keymap = "<leader>t",
-            border = border.simpleBorder -- doubleBorder, simpleBorder, simpleRoundedBorder, simpleThickBorder
-        })
+            border = border.simpleRoundedBorder, -- doubleBorder, simpleBorder, simpleRoundedBorder, simpleThickBorder
+            gitKeymap = {
+                quit = "q",
+                edit = "<cr>",
+                stage = "s",
+                unstage = "u",
+                discard = "d",
+                commit = "c",
+                push = "p",
+                pull = "pl",
+            }
+        });
     end
 }
 ```
 
-## Keymaps
+## Default keymaps
 
 s => stage file
 u => unstage file
@@ -37,7 +47,7 @@ pl => pull
 - [ ] Enhance the setup
     - [x] Make the keybinding in the setup.
     - [x] Make the window into a class. So i can be more customisable
-    - [ ] Make git keymap customisable
+    - [x] Make git keymap customisable
 - [ ] Make documentation
     - [x] image to show feature
     - [ ] Giph to show feature

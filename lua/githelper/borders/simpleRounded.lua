@@ -10,7 +10,7 @@ simple_border[constant.SPLIT_LEFT_SIDE] = "├"
 simple_border[constant.SPLIT_RIGHT_SIDE] = "┤"
 simple_border[constant.CORNER_LEFT_TOP] = "╭"
 simple_border[constant.CORNER_RIGHT_TOP] = "╮"
-simple_border[constant.CORNER_LEFT_BOTTOM] = "╯"
-simple_border[constant.CORNER_RIGHT_BOTTOM] = "╰"
+simple_border[constant.CORNER_RIGHT_BOTTOM] = "╯"
+simple_border[constant.CORNER_LEFT_BOTTOM] = "╰"
 
 return simple_border

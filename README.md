@@ -14,19 +14,21 @@ Commit :
     "DannickBedard/githelper.nvim",
     config = function ()
         local border = require("githelper.border")
-        local gitKeymap = 
+
+        local gitKeymap = { -- Default keymap
+            quit = "q",
+            edit = "<cr>",
+            stage = "s",
+            unstage = "u",
+            discard = "d",
+            commit = "c",
+            push = "p",
+            pull = "pl",
+        }
+
         require("githelper").setup({
             border = border.simpleRoundedBorder, -- doubleBorder, simpleBorder, simpleRoundedBorder, simpleThickBorder
-            gitKeymap = {
-                quit = "q",
-                edit = "<cr>",
-                stage = "s",
-                unstage = "u",
-                discard = "d",
-                commit = "c",
-                push = "p",
-                pull = "pl",
-            }
+            gitKeymap = gitKeymap
         });
     end
 }

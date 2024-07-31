@@ -45,16 +45,9 @@ pl => pull
 <cr> => edit file
 
 # TODOS : 
-
-- [ ] Enhance the setup
-    - [x] Make the keybinding in the setup.
-    - [x] Make the window into a class. So i can be more customisable
-    - [x] Make git keymap customisable
-- [ ] Make documentation
-    - [x] image to show feature
-    - [ ] Giph to show feature
-    - [x] Doc setup & installation
-
-- [ ] Border
-    - [x] Make rouded corder available
 - [ ] Diff
+    - [x] Make the view
+    - [ ] Window won't always open... 
+- [ ] Make a confirmation for discarding
+    - [ ] Make window
+    - [ ] Add settings in setup to disable this feature if you find it annoying

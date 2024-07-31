@@ -34,16 +34,6 @@ Commit :
 }
 ```
 
-## Default keymaps
-
-s => stage file
-u => unstage file
-d => discard file
-c => commit
-p => push
-pl => pull
-<cr> => edit file
-
 # TODOS : 
 - [ ] Diff
     - [x] Make the view

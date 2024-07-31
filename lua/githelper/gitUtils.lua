@@ -9,7 +9,7 @@ end
 
 local getUntrakedFile = function ()
   local untrakedFile = api.nvim_call_function('systemlist', {
-      'git ls-files --others'
+      'git ls-files --others --exclude-standard'
   })
   return untrakedFile
 end
